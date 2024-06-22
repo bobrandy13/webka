@@ -15,5 +15,5 @@ public class Cluster
       
    // each cluster should have a relation to any number of topics; 
    // private List<Topic> _topics;
-   public ICollection<Topic> Topics { get; set; } = null!;
+   public ICollection<Topic>? Topics { get; set; } = null!;
 }

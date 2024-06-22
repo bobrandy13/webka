@@ -12,7 +12,7 @@ public class Consumer {
 
     // // Consumers can push their offset to the saved in the same location as the output. 
     // public long offset;
-    public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+    public ICollection<Subscription>? Subscriptions { get; set; } = new List<Subscription>();
     
     // All consumers must belong to a group 
     public long ConsumerGroupId { get; set; } 

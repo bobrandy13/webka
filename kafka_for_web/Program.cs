@@ -10,7 +10,6 @@ builder.Services.AddDbContext<KafkaContext>(options =>
     options.UseSqlServer("Server=localhost;Database=webka;Trusted_Connection=True;TrustServerCertificate=True"));
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

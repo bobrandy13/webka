@@ -16,5 +16,5 @@ public class ConsumerGroup
    public Cluster Cluster { get; set; } = null!;
 
    // contain a list of all consumers
-   public ICollection<Consumer> Consumers { get; set; } = null!;
+   public ICollection<Consumer>? Consumers { get; set; } = null!;
 }

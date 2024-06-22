@@ -13,7 +13,7 @@ public class Topic
    public long NumPartitions { get; set; }
    public long ReplicationFactor { get; set; }
 
-   public ICollection<Partition> Partitions { get; set; } = null!;
+   public ICollection<Partition>? Partitions { get; set; } = null!;
 
    public TimeSpan RetentionPeriod; 
 }

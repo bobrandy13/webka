@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    [Migration("20240623012410_Initial")]
-    partial class Initial
+    [Migration("20240623032925_OptionalTags")]
+    partial class OptionalTags
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,7 +112,8 @@ namespace Kafka_for_web.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.HasKey("Id");
 
@@ -133,11 +134,8 @@ namespace Kafka_for_web.Migrations
 
                     b.Property<string>("LogDir")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<long>("ReplicationFactor")
-                        .HasColumnType("bigint");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -160,7 +158,7 @@ namespace Kafka_for_web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("MostRecentMessageId")
+                    b.Property<long?>("MostRecentMessageId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
@@ -268,9 +266,7 @@ namespace Kafka_for_web.Migrations
                 {
                     b.HasOne("Kafka_for_web.Models.Message", "MostRecentMessage")
                         .WithMany()
-                        .HasForeignKey("MostRecentMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MostRecentMessageId");
 
                     b.Navigation("MostRecentMessage");
                 });

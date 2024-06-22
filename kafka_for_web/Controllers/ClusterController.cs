@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
+using NuGet.Protocol;
 
 namespace Kafka_for_web.Controllers
 {
@@ -25,6 +26,7 @@ namespace Kafka_for_web.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cluster>>> GetClusters()
         {
+            Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
             return await _context.Clusters.ToListAsync();
         }
 
@@ -80,8 +82,26 @@ namespace Kafka_for_web.Controllers
         {
             _context.Clusters.Add(cluster);
             await _context.SaveChangesAsync();
+            var path = $"{System.IO.Directory.GetCurrentDirectory()}/logs/{cluster.Name}";
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Console.WriteLine("This directory already exists");
+                    return NotFound();
+                }
+                
+                var di = Directory.CreateDirectory(path);
+                Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
+                
+                return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("This process failed {0}", e);
+            }
 
-            return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
+            return NotFound(); 
         }
 
         // DELETE: api/Cluster/5
