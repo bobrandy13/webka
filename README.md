@@ -25,7 +25,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/bobrandy13/webka">
-    <img src="https://i.postimg.cc/8Jcgc83N/http.jpg" alt="Logo" width="80" height="80">
+    <img src="https://i.postimg.cc/Y0ZN25h3/webka.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Webka</h3>
@@ -160,8 +160,6 @@ simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LICENSE -->
 
