@@ -83,7 +83,22 @@ namespace Kafka_for_web.Controllers
 
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
         }
-
+        
+        // * Post a new message
+        [HttpPost("/message")]
+        // Takes parameter producerID. 
+        public async Task<IActionResult> PostMessage(long id, long partitionId, Message message)
+        {
+            var producer = await _context.Producers.FindAsync(id);
+            if (producer == null)
+            {
+                return NotFound();
+            }
+            producer.Messages.Add(message);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
+        }
+        
         // DELETE: api/Producer/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducer(long id)

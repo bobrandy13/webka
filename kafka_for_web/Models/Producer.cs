@@ -7,5 +7,5 @@ public class Producer {
     public Message? MostRecentMessage { get; set; } = null!;
 
     // When a user produces a new message 
-    public ICollection<Message>? Messages { get; set; } = null!;
+    public ICollection<Message>? Messages { get; set; } = [];
 }

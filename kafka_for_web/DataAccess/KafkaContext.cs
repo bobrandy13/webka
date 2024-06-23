@@ -17,6 +17,8 @@ public class KafkaContext : DbContext
         modelBuilder.Entity<Consumer>().ToTable("Consumer");
         modelBuilder.Entity<Producer>().ToTable("Producer");
         modelBuilder.Entity<ConsumerGroup>().ToTable("ConsumerGroup");
+
+        modelBuilder.Entity<Subscription>().ToTable("Subscription");
     }
 
     public DbSet<Cluster> Clusters { get; set; } 
@@ -27,4 +29,6 @@ public class KafkaContext : DbContext
     public DbSet<Consumer> Consumers { get; set; }
     
     public DbSet<ConsumerGroup> ConsumerGroups { get; set; }
+    
+    public DbSet<Subscription> Subscriptions { get; set; }
 }

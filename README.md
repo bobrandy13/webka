@@ -63,7 +63,6 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -136,11 +135,28 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 
 ## Roadmap
 
-- [x] Allow creation of clusters
-- [x] Allow creation of topics
-- [x] Allow creation of partitions
-- [x] Save these to SQL Server
+## Roadmap
 
+- [x] Set up project with ASP.NET and C#
+- [x] Implement Kafka-like messaging system
+- [x] Create models for Cluster, Topics, Partitions, Producers, Consumers, Consumer Groups, Subscriptions, and Messages
+- [x] Implement HTTP Interface with RESTful API
+- [x] Implement Producers to send messages to topics
+- [x] Implement Consumers to subscribe to topics and consume messages
+- [x] Implement Consumer Groups for load balancing and fault tolerance
+- [x] Implement Subscriptions to define which consumers are subscribed to which topics
+- [x] Implement Messages to store and manage messages within partitions
+- [x] Save all data to SQL Server
+- [ ] Allow producers to produce messages, and consumers can consume them. 
+- [ ] Add support for real-time updates using WebSockets or Server-Sent Events
+  - [ ] Allow consumers to connect through SSE in real-time
+- [ ] Implement a system for monitoring and logging activity
+- [ ] Add testing. 
+- [ ] Implement authentication and authorization for API access
+
+See the [open issues](https://github.com/bobrandy13/webka/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 See the [open issues](https://github.com/bobrandy13/webka/issues) for a full list of proposed features (and known
 issues).
 
@@ -176,9 +192,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 Project Link: [https://github.com/bobrandy13/webka](https://github.com/github_username/repo_name)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->

@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Kafka_for_web.Models; 
 
@@ -24,10 +26,15 @@ public class Consumer {
 // Many-to-many relationship
 public class Subscription
 {
+    [Key]
     public long Id { get; set; }
-    public Consumer Consumer { get; set; } = null!;
-    public Topic Topic { get; set; } = null!;
+    public long ConsumerId { get; set; }
     
-    // The partition that the consumer is reading from
-
+    [ForeignKey("ConsumerId")]
+    public Consumer Consumer { get; set; } = null!;
+    
+    public long TopicId { get; set; }
+    
+    [ForeignKey("TopicId")]
+    public Topic Topic { get; set; } = null!;
 }

@@ -12,47 +12,47 @@ namespace Kafka_for_web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ConsumerController : ControllerBase
+    public class ConsumerGroupController : ControllerBase
     {
         private readonly KafkaContext _context;
 
-        public ConsumerController(KafkaContext context)
+        public ConsumerGroupController(KafkaContext context)
         {
             _context = context;
         }
 
-        // GET: api/Consumer
+        // GET: api/ConsumerGroup
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Consumer>>> GetConsumers()
+        public async Task<ActionResult<IEnumerable<ConsumerGroup>>> GetConsumerGroups()
         {
-            return await _context.Consumers.ToListAsync();
+            return await _context.ConsumerGroups.ToListAsync();
         }
 
-        // GET: api/Consumer/5
+        // GET: api/ConsumerGroup/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Consumer>> GetConsumer(long id)
+        public async Task<ActionResult<ConsumerGroup>> GetConsumerGroup(long id)
         {
-            var consumer = await _context.Consumers.FindAsync(id);
+            var consumerGroup = await _context.ConsumerGroups.FindAsync(id);
 
-            if (consumer == null)
+            if (consumerGroup == null)
             {
                 return NotFound();
             }
 
-            return consumer;
+            return consumerGroup;
         }
 
-        // PUT: api/Consumer/5
+        // PUT: api/ConsumerGroup/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutConsumer(long id, Consumer consumer)
+        public async Task<IActionResult> PutConsumerGroup(long id, ConsumerGroup consumerGroup)
         {
-            if (id != consumer.Id)
+            if (id != consumerGroup.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(consumer).State = EntityState.Modified;
+            _context.Entry(consumerGroup).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace Kafka_for_web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ConsumerExists(id))
+                if (!ConsumerGroupExists(id))
                 {
                     return NotFound();
                 }
@@ -73,42 +73,36 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
-        [HttpPost("/subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(long consumerId, long topicId)
-        {
-            return NotFound(); 
-        }
-
-        // POST: api/Consumer
+        // POST: api/ConsumerGroup
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Consumer>> PostConsumer(Consumer consumer)
+        public async Task<ActionResult<ConsumerGroup>> PostConsumerGroup(ConsumerGroup consumerGroup)
         {
-            _context.Consumers.Add(consumer);
+            _context.ConsumerGroups.Add(consumerGroup);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetConsumer", new { id = consumer.Id }, consumer);
+            return CreatedAtAction("GetConsumerGroup", new { id = consumerGroup.Id }, consumerGroup);
         }
 
-        // DELETE: api/Consumer/5
+        // DELETE: api/ConsumerGroup/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteConsumer(long id)
+        public async Task<IActionResult> DeleteConsumerGroup(long id)
         {
-            var consumer = await _context.Consumers.FindAsync(id);
-            if (consumer == null)
+            var consumerGroup = await _context.ConsumerGroups.FindAsync(id);
+            if (consumerGroup == null)
             {
                 return NotFound();
             }
 
-            _context.Consumers.Remove(consumer);
+            _context.ConsumerGroups.Remove(consumerGroup);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ConsumerExists(long id)
+        private bool ConsumerGroupExists(long id)
         {
-            return _context.Consumers.Any(e => e.Id == id);
+            return _context.ConsumerGroups.Any(e => e.Id == id);
         }
     }
 }

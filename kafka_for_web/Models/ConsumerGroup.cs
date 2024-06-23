@@ -13,7 +13,7 @@ public class ConsumerGroup
    public long ClusterId { get; set; }
 
    [ForeignKey("ClusterId")] 
-   public Cluster Cluster { get; set; } = null!;
+   public Cluster? Cluster { get; set; } = null!;
 
    // contain a list of all consumers
    public ICollection<Consumer>? Consumers { get; set; } = null!;
