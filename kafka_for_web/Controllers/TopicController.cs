@@ -78,6 +78,9 @@ namespace Kafka_for_web.Controllers
         [HttpPost]
         public async Task<ActionResult<Topic>> PostTopic(Topic topic)
         {
+            // ! Need to find the parent cluster that it wants to create within  
+            // ! therefore, add it to the request parameters. Need to make a new class as part of the paramters
+            
             _context.Topics.Add(topic);
             await _context.SaveChangesAsync();
 

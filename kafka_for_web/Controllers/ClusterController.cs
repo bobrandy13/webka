@@ -80,8 +80,6 @@ namespace Kafka_for_web.Controllers
         [HttpPost]
         public async Task<ActionResult<Cluster>> PostCluster(Cluster cluster)
         {
-            _context.Clusters.Add(cluster);
-            await _context.SaveChangesAsync();
             var path = $"{System.IO.Directory.GetCurrentDirectory()}/logs/{cluster.Name}";
             try
             {
@@ -90,6 +88,8 @@ namespace Kafka_for_web.Controllers
                     Console.WriteLine("This directory already exists");
                     return NotFound();
                 }
+                _context.Clusters.Add(cluster);
+                await _context.SaveChangesAsync();
                 
                 var di = Directory.CreateDirectory(path);
                 Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
