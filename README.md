@@ -152,8 +152,14 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 - [x] Implement Messages
 - [x] Save data to MS SQL Server
 - [x] Allow producers to produce messages
+- [ ] Producer must specify a topic, and specify partition
+- [ ] Allow all types of messages to be produced, Objects, json, strings, int, etc
+- [ ] Partition producer's data into partitions using a partition key and hashing algorithms
+- [ ] Have a replication factor
 - [ ] Allow consumers to consume messages
 - [ ] Allow consumers to specify the offset to start consuming messages
+- [ ] Atleast once, at most once, and exactly once delivery semantics, allow producer to specify.
+- [ ] Save data across multiple brokers
 - [ ] Add support for real-time updates using WebSockets or Server-Sent Events
   - [ ] Allow consumers to connect through SSE in real-time
 - [ ] Implement a system for monitoring and logging activity
