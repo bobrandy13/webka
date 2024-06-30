@@ -9,16 +9,19 @@ public class KafkaContext : DbContext
     {
     }
     
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=webka;");
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Cluster>().ToTable("Cluster");
-        modelBuilder.Entity<Topic>().ToTable("Topic");
-        modelBuilder.Entity<Partition>().ToTable("Partition");
-        modelBuilder.Entity<Consumer>().ToTable("Consumer");
-        modelBuilder.Entity<Producer>().ToTable("Producer");
-        modelBuilder.Entity<ConsumerGroup>().ToTable("ConsumerGroup");
-
-        modelBuilder.Entity<Subscription>().ToTable("Subscription");
+        modelBuilder.Entity<Cluster>().ToTable("cluster");
+        modelBuilder.Entity<Topic>().ToTable("topic");
+        modelBuilder.Entity<Partition>().ToTable("partition");
+        modelBuilder.Entity<Consumer>().ToTable("consumer");
+        modelBuilder.Entity<Producer>().ToTable("producer");
+        modelBuilder.Entity<ConsumerGroup>().ToTable("consumerGroup");
+        
+        modelBuilder.Entity<Subscription>().ToTable("subscription");
     }
 
     public DbSet<Cluster> Clusters { get; set; } 

@@ -8,12 +8,11 @@ public static class HashFunction
 
    public static int Hash<T> (T key, int mod = 1)
    {
-      // hash over the generic type T
       if (key == null)
       {
          return -1; 
       }
-      // * return a key from 0 to 2^32 - 1
+       
       var data = Sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(key.ToString() ?? throw new InvalidOperationException()));
       
       return BitConverter.ToInt32(data) % mod; 

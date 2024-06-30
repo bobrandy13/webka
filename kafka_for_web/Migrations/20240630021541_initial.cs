@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,9 +16,9 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReplicationCount = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ReplicationCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,8 +30,8 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ClusterId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -49,11 +50,11 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     NumPartitions = table.Column<long>(type: "bigint", nullable: false),
                     ReplicationFactor = table.Column<long>(type: "bigint", nullable: false),
-                    ClusterId = table.Column<long>(type: "bigint", nullable: true)
+                    ClusterId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,7 +63,8 @@ namespace Kafka_for_web.Migrations
                         name: "FK_Topic_Cluster_ClusterId",
                         column: x => x.ClusterId,
                         principalTable: "Cluster",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,10 +72,10 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ConsumerGroupId = table.Column<long>(type: "bigint", nullable: false),
-                    EnableAutoCommit = table.Column<bool>(type: "bit", nullable: false)
+                    EnableAutoCommit = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,9 +93,9 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LogDir = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LogDir = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     TopicId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -111,7 +113,7 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ConsumerId = table.Column<long>(type: "bigint", nullable: false),
                     TopicId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -137,9 +139,9 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<long>(type: "bigint", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Key = table.Column<long>(type: "bigint", nullable: true),
+                    Value = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     PartitionId = table.Column<long>(type: "bigint", nullable: true),
                     ProducerId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -158,8 +160,8 @@ namespace Kafka_for_web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     MostRecentMessageId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>

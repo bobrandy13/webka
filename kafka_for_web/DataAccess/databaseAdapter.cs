@@ -7,6 +7,7 @@ public class databaseAdapter
     
 }
 
+// TODO: Write the different adapters to use the dependency injection at runtime. 
 public class PostGres
 {
     

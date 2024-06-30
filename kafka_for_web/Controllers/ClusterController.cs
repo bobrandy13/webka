@@ -85,14 +85,14 @@ namespace Kafka_for_web.Controllers
             {
                 if (Directory.Exists(path))
                 {
-                    Console.WriteLine("This directory already exists");
+                    Console.WriteLine("This directory already exists, and therefore so does this cluster");
                     return NotFound();
                 }
                 _context.Clusters.Add(cluster);
                 await _context.SaveChangesAsync();
                 
                 var di = Directory.CreateDirectory(path);
-                Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
+                Console.WriteLine("The directory was created successfully at {0}, at path {1}", Directory.GetCreationTime(path), path);
                 
                 return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
             }

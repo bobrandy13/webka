@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Kafka_for_web.Models;
 
 public class Cluster
 {
    public long Id { get; set; }
+   
+   [StringLength((100))]
    public string Name { get; set; } = null!;
    
    // The number of brokers
