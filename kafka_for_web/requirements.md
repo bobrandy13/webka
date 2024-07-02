@@ -135,6 +135,7 @@ CREATE TABLE brokers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE partitions (
     id SERIAL PRIMARY KEY,
     topic_id INTEGER NOT NULL,
@@ -150,4 +151,7 @@ CREATE TABLE producers {
     name NOT NULL 
 }
 
+
+# LOG FORMAT for writing to a partition
+[date] [time] [topic] [partition] [offset] [key] [value] [action]
 

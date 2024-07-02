@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Kafka_for_web.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
@@ -87,15 +88,31 @@ namespace Kafka_for_web.Controllers
         // * Post a new message
         [HttpPost("/message")]
         // Takes parameter producerID. 
-        public async Task<IActionResult> PostMessage(long id, long partitionId, Message message)
+        public async Task<IActionResult> PostMessage(Message message)
         {
-            var producer = await _context.Producers.FindAsync(id);
+            var producer = await _context.Producers.FindAsync(message.ProducerId);
+
+            foreach (var p in await _context.Producers.ToListAsync())
+            {
+                Console.WriteLine("Producer id: " + p.Id);
+            }
+            
             if (producer == null)
             {
                 return NotFound();
             }
-            producer.Messages.Add(message);
-            await _context.SaveChangesAsync();
+            // producer.Messages ??= new List<Message>();
+            
+            // dont save the changes to the database; Messages don't belong in the database; 
+            // producer.Messages.Add(message);
+            // await _context.SaveChangesAsync();
+            
+            // if that is successful, each message should be written to the log file;  
+            var logPath = @"logs/users/log1.txt";  
+            
+            // Will write to a text file
+            Logger.Write(logPath, message.Value);
+            
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
         }
         

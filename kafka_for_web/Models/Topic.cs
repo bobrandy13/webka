@@ -15,6 +15,7 @@ public class Topic
    public long ReplicationFactor { get; set; }
    
    public long ClusterId { get; set; }
+   
    [ForeignKey("ClusterId")]
    public Cluster? Cluster { get; set; } = null!;
 

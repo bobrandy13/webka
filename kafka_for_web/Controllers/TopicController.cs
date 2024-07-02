@@ -73,10 +73,11 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
+        // A user should be able to subscribe to any given topic, and then be connected via SSE and listen to events. OR they can specify an offset to start reading from. 
         // POST: api/Topic
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Topic>> PostTopic(Topic topic)
+        public async Task<ActionResult<Topic>> PostTopic(long clusterId, Topic topic)
         {
             // ! Need to find the parent cluster that it wants to create within  
             // ! therefore, add it to the request parameters. Need to make a new class as part of the paramters
@@ -86,7 +87,7 @@ namespace Kafka_for_web.Controllers
 
             return CreatedAtAction("GetTopic", new { id = topic.Id }, topic);
         }
-
+        
         // DELETE: api/Topic/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTopic(long id)

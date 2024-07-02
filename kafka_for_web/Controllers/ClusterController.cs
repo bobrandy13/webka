@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
-using NuGet.Protocol;
 
 namespace Kafka_for_web.Controllers
 {
@@ -90,10 +84,10 @@ namespace Kafka_for_web.Controllers
                 }
                 _context.Clusters.Add(cluster);
                 await _context.SaveChangesAsync();
-                
+
                 var di = Directory.CreateDirectory(path);
                 Console.WriteLine("The directory was created successfully at {0}, at path {1}", Directory.GetCreationTime(path), path);
-                
+
                 return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
             }
             catch (Exception e)
@@ -101,7 +95,7 @@ namespace Kafka_for_web.Controllers
                 Console.WriteLine("This process failed {0}", e);
             }
 
-            return NotFound(); 
+            return NotFound();
         }
 
         // DELETE: api/Cluster/5
