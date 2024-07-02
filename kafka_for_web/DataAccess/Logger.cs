@@ -1,8 +1,10 @@
+using Kafka_for_web.Models;
+
 namespace Kafka_for_web.DataAccess;
 
 public static class Logger
 {
-    public static bool Write(string logPath, string message)
+    public static bool Write(string logPath, Message message)
     {
         try
         {
@@ -15,7 +17,11 @@ public static class Logger
             
             using StreamWriter writer = new(logDirectory, append: true);
             
-            writer.WriteLine(message);
+            // Get the current time 
+            var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss");
+            var logContent = $"{message.ProducerId}-{currentTime}: {message.Value}";
+            
+            writer.WriteLine(logContent);
 
             return true;
         }
