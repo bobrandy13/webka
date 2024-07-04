@@ -74,28 +74,10 @@ namespace Kafka_for_web.Controllers
         [HttpPost]
         public async Task<ActionResult<Cluster>> PostCluster(Cluster cluster)
         {
-            var path = $"{System.IO.Directory.GetCurrentDirectory()}/logs/{cluster.Name}";
-            try
-            {
-                if (Directory.Exists(path))
-                {
-                    Console.WriteLine("This directory already exists, and therefore so does this cluster");
-                    return NotFound();
-                }
-                _context.Clusters.Add(cluster);
-                await _context.SaveChangesAsync();
-
-                var di = Directory.CreateDirectory(path);
-                Console.WriteLine("The directory was created successfully at {0}, at path {1}", Directory.GetCreationTime(path), path);
-
-                return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("This process failed {0}", e);
-            }
-
-            return NotFound();
+            
+            _context.Clusters.Add(cluster);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
         }
 
         // DELETE: api/Cluster/5

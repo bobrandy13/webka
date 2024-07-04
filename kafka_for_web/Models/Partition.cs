@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Kafka_for_web.Models;
 
@@ -22,8 +23,11 @@ public class Partition
     public PartitionStatus Status { get; init; }
     
     // Stores the most recent messages in an array
+    [JsonIgnore]
     public ICollection<Message>? Messages { get; init; } = null!;
     
     public long TopicId { get; set; }
+    
+    [JsonIgnore]
     public Topic? Topic { get; set; } = null!;
 }

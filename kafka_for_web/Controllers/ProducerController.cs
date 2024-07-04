@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Kafka_for_web.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
 
 namespace Kafka_for_web.Controllers
@@ -84,7 +83,7 @@ namespace Kafka_for_web.Controllers
 
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
         }
-        
+
         // * Post a new message
         [HttpPost("/message")]
         // Takes parameter producerID. 
@@ -92,30 +91,27 @@ namespace Kafka_for_web.Controllers
         {
             var producer = await _context.Producers.FindAsync(message.ProducerId);
 
-            foreach (var p in await _context.Producers.ToListAsync())
-            {
-                Console.WriteLine("Producer id: " + p.Id);
-            }
-            
             if (producer == null)
             {
                 return NotFound();
             }
-            // producer.Messages ??= new List<Message>();
-            
-            // dont save the changes to the database; Messages don't belong in the database; 
-            // producer.Messages.Add(message);
-            // await _context.SaveChangesAsync();
-            
+
+            // find the right directory log file that it should be under.
+            // database query to find all partitions;
+            var topic = await _context.Topics.FindAsync(message.TopicId);
+            if (topic == null) return BadRequest();
+            var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
+            if (cluster == null) return BadRequest();
+
             // if that is successful, each message should be written to the log file;  
-            var logPath = @"logs/users/log1.txt";  
-            
+            var logPath = $"logs/{cluster.Name}/{topic.Name}/log.txt";
+
             // Will write to a text file
-            Logger.Write(logPath, message.Value);
-            
+            Logger.Write(logPath, message);
+
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
         }
-        
+
         // DELETE: api/Producer/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducer(long id)

@@ -1,24 +1,36 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 
-namespace Kafka_for_web.Models; 
+namespace Kafka_for_web.Models;
 
 // Consumers must be part of a consumerGroup
 
-public class Consumer {
+public enum MessageOffset
+{
+    earliest,
+    latest,
+    custom,
+    none
+}
+
+public class Consumer
+{
     public long Id { get; set; }
 
-    [StringLength((100))] 
+    [StringLength((100))]
+    [Index(IsUnique = true)]
     public string Name { get; set; } = null!;
 
     // // Consumers can push their offset to the saved in the same location as the output. 
     // public long offset;
-    public ICollection<Subscription>? Subscriptions { get; set; } = new List<Subscription>();
-    
-    // All consumers must belong to a group 
-    public long ConsumerGroupId { get; set; } 
-    
+    [JsonIgnore]
+    public ICollection<Subscription>? Subscriptions { get; set; } = [];
+
+    public long? ConsumerGroupId { get; set; }
+
     // Allows the consumer to autocommit their offset to the partition that they are reading from. 
     public bool EnableAutoCommit { get; set; }
 }
@@ -29,12 +41,26 @@ public class Subscription
     [Key]
     public long Id { get; set; }
     public long ConsumerId { get; set; }
-    
-    [ForeignKey("ConsumerId")]
+
+    [JsonIgnore]
     public Consumer Consumer { get; set; } = null!;
-    
+
     public long TopicId { get; set; }
-    
-    [ForeignKey("TopicId")]
+
+    [JsonIgnore]
     public Topic Topic { get; set; } = null!;
+}
+
+public class ConsumerOptionalParams
+{
+    public bool? from_begining { get; set; }
+    public bool? __formatter { get; set; }
+
+    public string? consumer_property { get; set; } = null!;
+
+    public bool? __group { get; set; }
+
+    public bool? __max_messages { get; set; }
+
+    public bool? __partition;
 }

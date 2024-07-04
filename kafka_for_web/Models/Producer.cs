@@ -1,6 +1,9 @@
-namespace Kafka_for_web.Models; 
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Producer {
+namespace Kafka_for_web.Models;
+
+public class Producer
+{
     public long Id { get; set; }
     public string Name { get; set; } = null!;
 

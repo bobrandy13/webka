@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace Kafka_for_web.Controllers
 {
@@ -77,17 +78,43 @@ namespace Kafka_for_web.Controllers
         // POST: api/Topic
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Topic>> PostTopic(long clusterId, Topic topic)
+        public async Task<ActionResult<Topic>> PostTopic(Topic topic)
         {
-            // ! Need to find the parent cluster that it wants to create within  
-            // ! therefore, add it to the request parameters. Need to make a new class as part of the paramters
-            
-            _context.Topics.Add(topic);
-            await _context.SaveChangesAsync();
+            var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
+            if (cluster == null) return NotFound();
+
+            Console.WriteLine(cluster.Name);
+
+            var path = $"{System.IO.Directory.GetCurrentDirectory()}/logs/{cluster.Name}/{topic.Name}";
+
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Console.WriteLine("This directory already exists, and therefore so does this cluster");
+                    return BadRequest();
+                }
+
+                _context.Topics.Add(topic);
+                await _context.SaveChangesAsync();
+                
+                var di = Directory.CreateDirectory(path);
+                Console.WriteLine("The directory was created successfully at {0}, at path {1}",
+                    Directory.GetCreationTime(path), path);
+
+                return CreatedAtAction("GetTopic", new { id = cluster.Id }, cluster);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("This process failed {0}", e);
+            }
+
+            Console.WriteLine(path);
+
 
             return CreatedAtAction("GetTopic", new { id = topic.Id }, topic);
         }
-        
+
         // DELETE: api/Topic/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTopic(long id)
@@ -95,7 +122,7 @@ namespace Kafka_for_web.Controllers
             var topic = await _context.Topics.FindAsync(id);
             if (topic == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             _context.Topics.Remove(topic);

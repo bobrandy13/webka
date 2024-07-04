@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
+using System.Collections;
+using System.Net;
 
 namespace Kafka_for_web.Controllers
 {
@@ -73,11 +75,24 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
-        [HttpPost("/subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(long consumerId, long topicId)
+        [HttpGet("subscribe")]
+        public async Task<IActionResult> SubscribeToTopic(string consumerName, string clusterName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken, MessageOffset offset = MessageOffset.latest)
         {
-            return NotFound(); 
+            // this should estsablish a long polling connection to the client 
+            await Task.Delay(500, cancellationToken);
+
+            var logPath = $"logs/{clusterName}/{topicName}/log.txt";
+
+            var message = Logger.FetchMessage(logPath, offset);
+
+            // TODO: increase the offset of the current consumer and then save it in the metadata
+
+            return new ObjectResult(new { Message = message ?? "Long polling timeout!" });
         }
+
+        /// <summary>
+        /// Method <c>fetchMessage()</c> checks for new messages depending on the offset
+        /// </summary>
 
         // POST: api/Consumer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

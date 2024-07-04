@@ -14,13 +14,14 @@ public class Message
     [StringLength(300)]
     public string Value { get; set; } = null!;
     
-    public long PartitionId { get; set; }
+    public long TopicId { get; set; }
     
     [JsonIgnore]
-    public Partition? Partition { get; set; } = null!;
+    public Partition? Topic { get; set; } = null!;
     
     public long ProducerId { get; set; }
     
     [JsonIgnore]
     public Producer? Producer { get; set; } = null!;
+    
 }

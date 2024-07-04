@@ -1,4 +1,5 @@
 using System.Data.SqlClient;
+using System.Text.Json.Serialization;
 using Dapper;
 using Npgsql;
 using Kafka_for_web.DataAccess;
@@ -12,7 +13,11 @@ builder.Services.AddDbContext<KafkaContext>(options =>
 
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
