@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 
 namespace Kafka_for_web.Models;
@@ -29,7 +30,7 @@ public class Consumer
     [JsonIgnore]
     public ICollection<Subscription>? Subscriptions { get; set; } = [];
 
-    public long? ConsumerGroupId { get; set; }
+    public long ConsumerGroupId { get; set; }
 
     // Allows the consumer to autocommit their offset to the partition that they are reading from. 
     public bool EnableAutoCommit { get; set; }
@@ -53,14 +54,27 @@ public class Subscription
 
 public class ConsumerOptionalParams
 {
-    public bool? from_begining { get; set; }
-    public bool? __formatter { get; set; }
+    public bool? __from_beginning { get; set; }
+    // public bool? __formatter { get; set; }
 
-    public string? consumer_property { get; set; } = null!;
+    // public string? __consumer_property { get; set; } = null!;
 
-    public bool? __group { get; set; }
+    // public bool? __group { get; set; }
 
-    public bool? __max_messages { get; set; }
+    // public bool? __max_messages { get; set; }
 
-    public bool? __partition;
+    // public bool? __partition;
+}
+
+public class ConsumerOffsets
+{
+    public long ConsumerId;
+
+    [ForeignKey("ConsumerId")]
+    [JsonIgnore]
+    public Consumer consumer { get; set; } = null!;
+
+
+    public long offset;
+
 }

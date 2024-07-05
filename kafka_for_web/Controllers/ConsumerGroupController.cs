@@ -73,6 +73,27 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
+        [HttpPost("subscribe")]
+        public async Task<IActionResult> SubscribeToTopic(string consumerGroupName, string clusterName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken, int offset = -1)
+        {
+            // TODO: Parse optional params 
+            if (optionalParams.__from_beginning == true)
+            {
+                offset = 0;
+            }
+
+            // this should estsablish a long polling connection to the client 
+            await Task.Delay(5000, cancellationToken);
+
+            var logPath = $"logs/{clusterName}/{topicName}/log.txt";
+
+            var message = Logger.Read(logPath, offset);
+
+            // TODO: increase the offset of the current consumer and then save it in the metadata
+
+            return new ObjectResult(new { Message = message ?? "Long polling timeout!", status = "New message received!" });
+        }
+
         // POST: api/ConsumerGroup
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

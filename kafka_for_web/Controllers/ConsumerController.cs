@@ -75,20 +75,6 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
-        [HttpGet("subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(string consumerName, string clusterName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken, MessageOffset offset = MessageOffset.latest)
-        {
-            // this should estsablish a long polling connection to the client 
-            await Task.Delay(500, cancellationToken);
-
-            var logPath = $"logs/{clusterName}/{topicName}/log.txt";
-
-            var message = Logger.FetchMessage(logPath, offset);
-
-            // TODO: increase the offset of the current consumer and then save it in the metadata
-
-            return new ObjectResult(new { Message = message ?? "Long polling timeout!" });
-        }
 
         /// <summary>
         /// Method <c>fetchMessage()</c> checks for new messages depending on the offset

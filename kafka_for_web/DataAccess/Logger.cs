@@ -12,7 +12,7 @@ public static class Logger
         {
             var baseDirectory = AppContext.BaseDirectory;
 
-            // ykw, if it works it works.
+            // FIXME: bruh what is this
             var projectDirectory = Directory.GetParent(baseDirectory)?.Parent?.Parent?.Parent?.Parent?.FullName;
             if (projectDirectory == null) return false;
             var logDirectory = Path.Combine(projectDirectory, "kafka_for_web", logPath);
@@ -34,7 +34,7 @@ public static class Logger
         }
     }
 
-    private static string Read(string logPath, int offset)
+    public static string Read(string logPath, int offset)
     {
         try
         {
@@ -42,25 +42,17 @@ public static class Logger
 
             // ykw, if it works it works.
             var projectDirectory = Directory.GetParent(baseDirectory)?.Parent?.Parent?.Parent?.Parent?.FullName;
+            if (projectDirectory == null) return "Directory was not found. I am not in the correct location";
+
             var logDirectory = Path.Combine(projectDirectory, "Kafka_for_web", logPath);
             var line = File.ReadLines(logDirectory).Skip(offset).Take(1).First();
+
             return line;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            return "Not Found. THign was not fuond ";
-        }
-    }
-
-    public static string? FetchMessage(string logPath, MessageOffset offset)
-    {
-        switch (offset)
-        {
-            case MessageOffset.latest:
-                return Read(logPath, 0);
-
-            default: return Read(logPath, 1);
+            return "Not Found. Thing was not found.";
         }
     }
 }
