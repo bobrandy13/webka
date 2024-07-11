@@ -74,7 +74,7 @@ namespace Kafka_for_web.Controllers
         }
 
         [HttpPost("subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(string consumerGroupName, string clusterName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken, int offset = -1)
+        public async Task<IActionResult> SubscribeToTopic(string consumerGroupName, string clusterName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken, int offset = 0)
         {
             // TODO: Parse optional params 
             if (optionalParams.__from_beginning == true)
@@ -83,9 +83,14 @@ namespace Kafka_for_web.Controllers
             }
 
             // this should estsablish a long polling connection to the client 
-            await Task.Delay(5000, cancellationToken);
+            // await Task.Delay(5000, cancellationToken);
 
+            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(5));
             var logPath = $"logs/{clusterName}/{topicName}/log.txt";
+
+            // TODO: poll for every N seconds and check for new logs 
+
+
 
             var message = Logger.Read(logPath, offset);
 

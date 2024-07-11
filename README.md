@@ -112,16 +112,21 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/bobrandy13/webka.git
    ```
-2. Start the MS SQL Server. (Working on supporting other DBs)
-3. Run the migrations to create the database.
+2. Start the Database Server. Currently postgresql, and MS SQL are supported
+3. Migrate the models
+   ```zsh
+   dotnet ef migrations add Initial
+   ```
+4. Run the migrations to create the database.
    ```zsh
    dotnet ef database update
    ```
  
-4. Run the project in Visual Studio.
+5. Run the project in Visual Studio.
    ```zsh
    dotnet run
    ```
+6. Read the documentation to get started!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -152,16 +157,16 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 - [x] Implement Messages
 - [x] Save data to MS SQL Server
 - [x] Allow producers to produce messages
-- [ ] Producer must specify a topic, and specify partition
-- [ ] Allow all types of messages to be produced, Objects, json, strings, int, etc
+- [x] Producer must specify a topic, and specify partition
+- [x] Allow all types of messages to be produced, Objects, json, strings, int, etc
 - [ ] Partition producer's data into partitions using a partition key and hashing algorithms
-- [ ] Have a replication factor
-- [ ] Allow consumers to consume messages
-- [ ] Allow consumers to specify the offset to start consuming messages
-- [ ] Atleast once, at most once, and exactly once delivery semantics, allow producer to specify.
+- [ ] Have a replication factor to ensure reliability.
+- [x] Allow consumers to consume messages
+- [x] Allow consumers to specify the offset to start consuming messages
+- [ ] At least once, at most once, and exactly once delivery semantics, allow producer to specify.
 - [ ] Save data across multiple brokers
 - [ ] Add support for real-time updates using WebSockets or Server-Sent Events
-  - [ ] Allow consumers to connect through SSE in real-time
+- [x] Allow consumers to connect to Kafka through Long Polling
 - [ ] Implement a system for monitoring and logging activity
 - [ ] Add testing. 
 - [ ] Implement authentication and authorization for API access

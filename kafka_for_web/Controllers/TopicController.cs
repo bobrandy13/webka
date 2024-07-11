@@ -101,6 +101,24 @@ namespace Kafka_for_web.Controllers
                 var di = Directory.CreateDirectory(path);
                 Console.WriteLine("The directory was created successfully at {0}, at path {1}",
                     Directory.GetCreationTime(path), path);
+                
+                // Partitions should automatically be created when a topic is created
+                for (var i = 0; i < topic.NumPartitions; ++i)
+                {
+                    // make this many partitions;
+                    var partitionPath = path + "/partition" + i;
+                    if (Directory.Exists(partitionPath)) continue;
+                    var partition = Directory.CreateDirectory(partitionPath);
+                    
+                    
+                    // make the singular log file inside. Normally, there would be multiple log files with multiple replicas. 
+                    var logPath = partitionPath + "/log.txt";
+                    var logFile = System.IO.File.Create(logPath);
+                    logFile.Close();
+                    
+                    Console.WriteLine("The partition was created successfully at {0}, at path {1}",
+                        Directory.GetCreationTime(partitionPath), partitionPath);
+                }
 
                 return CreatedAtAction("GetTopic", new { id = cluster.Id }, cluster);
             }
