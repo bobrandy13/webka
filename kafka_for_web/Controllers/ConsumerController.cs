@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
+using System.Collections;
+using System.Net;
 
 namespace Kafka_for_web.Controllers
 {
@@ -73,11 +75,10 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
-        [HttpPost("/subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(long consumerId, long topicId)
-        {
-            return NotFound(); 
-        }
+
+        /// <summary>
+        /// Method <c>fetchMessage()</c> checks for new messages depending on the offset
+        /// </summary>
 
         // POST: api/Consumer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

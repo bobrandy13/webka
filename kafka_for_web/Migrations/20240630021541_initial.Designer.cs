@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,13 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240630021541_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -40,7 +43,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("cluster", (string)null);
+                    b.ToTable("Cluster", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Consumer", b =>
@@ -66,7 +69,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ConsumerGroupId");
 
-                    b.ToTable("consumer", (string)null);
+                    b.ToTable("Consumer", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.ConsumerGroup", b =>
@@ -89,7 +92,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ClusterId");
 
-                    b.ToTable("consumerGroup", (string)null);
+                    b.ToTable("ConsumerGroup", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Message", b =>
@@ -103,10 +106,10 @@ namespace Kafka_for_web.Migrations
                     b.Property<long?>("Key")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProducerId")
+                    b.Property<long?>("PartitionId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TopicId")
+                    b.Property<long?>("ProducerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Value")
@@ -116,11 +119,11 @@ namespace Kafka_for_web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PartitionId");
+
                     b.HasIndex("ProducerId");
 
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("message", (string)null);
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Partition", b =>
@@ -131,17 +134,22 @@ namespace Kafka_for_web.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("LogDir")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<long>("TopicId")
+                    b.Property<long?>("TopicId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("partition", (string)null);
+                    b.ToTable("Partition", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Producer", b =>
@@ -152,13 +160,18 @@ namespace Kafka_for_web.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<long?>("MostRecentMessageId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("producer", (string)null);
+                    b.HasIndex("MostRecentMessageId");
+
+                    b.ToTable("Producer", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Subscription", b =>
@@ -181,7 +194,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("subscription", (string)null);
+                    b.ToTable("Subscription", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Topic", b =>
@@ -210,7 +223,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ClusterId");
 
-                    b.ToTable("topic", (string)null);
+                    b.ToTable("Topic", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Consumer", b =>
@@ -235,32 +248,29 @@ namespace Kafka_for_web.Migrations
 
             modelBuilder.Entity("Kafka_for_web.Models.Message", b =>
                 {
-                    b.HasOne("Kafka_for_web.Models.Producer", "Producer")
+                    b.HasOne("Kafka_for_web.Models.Partition", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PartitionId");
 
-                    b.HasOne("Kafka_for_web.Models.Partition", "Topic")
+                    b.HasOne("Kafka_for_web.Models.Producer", null)
                         .WithMany("Messages")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Producer");
-
-                    b.Navigation("Topic");
+                        .HasForeignKey("ProducerId");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Partition", b =>
                 {
-                    b.HasOne("Kafka_for_web.Models.Topic", "Topic")
+                    b.HasOne("Kafka_for_web.Models.Topic", null)
                         .WithMany("Partitions")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TopicId");
+                });
 
-                    b.Navigation("Topic");
+            modelBuilder.Entity("Kafka_for_web.Models.Producer", b =>
+                {
+                    b.HasOne("Kafka_for_web.Models.Message", "MostRecentMessage")
+                        .WithMany()
+                        .HasForeignKey("MostRecentMessageId");
+
+                    b.Navigation("MostRecentMessage");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Subscription", b =>

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using kafka_for_web.DataAccess;
 using Microsoft.AspNetCore.Http;
+using Kafka_for_web.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
 
 namespace Kafka_for_web.Controllers
@@ -42,37 +43,6 @@ namespace Kafka_for_web.Controllers
             return producer;
         }
 
-        // PUT: api/Producer/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProducer(long id, Producer producer)
-        {
-            if (id != producer.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(producer).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProducerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Producer
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -83,36 +53,34 @@ namespace Kafka_for_web.Controllers
 
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
         }
-        
+
         // * Post a new message
         [HttpPost("/message")]
         // Takes parameter producerID. 
-        public async Task<IActionResult> PostMessage(long id, long partitionId, Message message)
+        public async Task<IActionResult> PostMessage(Message message)
         {
-            var producer = await _context.Producers.FindAsync(id);
+            var producer = await _context.Producers.FindAsync(message.ProducerId);
+
             if (producer == null)
             {
-                return NotFound();
+                return NotFound("Producer not found");
             }
-            producer.Messages.Add(message);
-            await _context.SaveChangesAsync();
+
+            // TODO: should decide which partition to save under 
+            var partition = HashFunction.Hash(message);
+
+            // FIX: Still requires 2 database calls. Is quite slow.
+            var topic = await _context.Topics.FindAsync(message.TopicId);
+            if (topic == null) return BadRequest("Topic not found");
+            
+            var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
+            if (cluster == null) return BadRequest("Cluster not found");
+
+            var logPath = $"logs/{cluster.Name}/{topic.Name}/partition{partition}/log.txt";
+
+            Logger.Write(logPath, message);
+
             return CreatedAtAction("GetProducer", new { id = producer.Id }, producer);
-        }
-        
-        // DELETE: api/Producer/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProducer(long id)
-        {
-            var producer = await _context.Producers.FindAsync(id);
-            if (producer == null)
-            {
-                return NotFound();
-            }
-
-            _context.Producers.Remove(producer);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool ProducerExists(long id)

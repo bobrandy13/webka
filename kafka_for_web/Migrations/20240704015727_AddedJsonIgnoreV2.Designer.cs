@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240704015727_AddedJsonIgnoreV2")]
+    partial class AddedJsonIgnoreV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace Kafka_for_web.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("ConsumerGroupId")
+                    b.Property<long?>("ConsumerGroupId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnableAutoCommit")
@@ -217,9 +220,7 @@ namespace Kafka_for_web.Migrations
                 {
                     b.HasOne("Kafka_for_web.Models.ConsumerGroup", null)
                         .WithMany("Consumers")
-                        .HasForeignKey("ConsumerGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ConsumerGroupId");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.ConsumerGroup", b =>

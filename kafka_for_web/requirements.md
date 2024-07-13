@@ -135,6 +135,7 @@ CREATE TABLE brokers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE partitions (
     id SERIAL PRIMARY KEY,
     topic_id INTEGER NOT NULL,
@@ -151,3 +152,24 @@ CREATE TABLE producers {
 }
 
 
+# LOG FORMAT for writing to a partition
+[date] [time] [topic] [partition] [offset] [key] [value] [action]
+
+# Plan 
+How to implement long polling.
+1. The client should establish a connection to the server. 
+2. The server should keep the connection open until a message is available. The server should check every second for a new message.
+3. If there is a new message, then this response should be forwarded to the client. If there is no message within the set interval, then the connection should time out. 
+4. The client should then re-establish a new connection to the server after it is done processing the previous message. 
+
+## How it actually works in code
+1. Client sends a HTTP Request to the server. 
+2. Server keeps the connection open for a set time of 5 second. Every second, check for new messages in the log file that the client is subscribed to.
+3. Then increment the consumer offset stored in the __consumer_offset topic. 
+4. The client then receives the message and processes it.
+5. Repeat the process
+ 
+- Depending on the user offset.
+- current_offset < end-of-log offset, return the message at the next offset.
+- if current_offset == end-of-log offest, then wait for new message to arrive for 5 seconds.
+- If the user offset is greater than the end-of-log offset, then hold the connection open until there is a message.

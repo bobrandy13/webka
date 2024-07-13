@@ -112,12 +112,21 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/bobrandy13/webka.git
    ```
-2. Start the SQL Server.
+2. Start the Database Server. Currently postgresql, and MS SQL are supported
+3. Migrate the models
+   ```zsh
+   dotnet ef migrations add Initial
+   ```
+4. Run the migrations to create the database.
+   ```zsh
+   dotnet ef database update
+   ```
  
-3. Run the project in Visual Studio.
+5. Run the project in Visual Studio.
    ```zsh
    dotnet run
    ```
+6. Read the documentation to get started!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -141,15 +150,23 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 - [x] Implement Kafka-like messaging system
 - [x] Create models for Cluster, Topics, Partitions, Producers, Consumers, Consumer Groups, Subscriptions, and Messages
 - [x] Implement HTTP Interface with RESTful API
-- [x] Implement Producers to send messages to topics
-- [x] Implement Consumers to subscribe to topics and consume messages
-- [x] Implement Consumer Groups for load balancing and fault tolerance
-- [x] Implement Subscriptions to define which consumers are subscribed to which topics
-- [x] Implement Messages to store and manage messages within partitions
-- [x] Save all data to SQL Server
-- [ ] Allow producers to produce messages, and consumers can consume them. 
+- [x] Implement Producers
+- [x] Implement Consumers
+- [x] Implement Consumer Groups 
+- [x] Implement Subscriptions
+- [x] Implement Messages
+- [x] Save data to MS SQL Server
+- [x] Allow producers to produce messages
+- [x] Producer must specify a topic, and specify partition
+- [x] Allow all types of messages to be produced, Objects, json, strings, int, etc
+- [ ] Partition producer's data into partitions using a partition key and hashing algorithms
+- [ ] Have a replication factor to ensure reliability.
+- [x] Allow consumers to consume messages
+- [x] Allow consumers to specify the offset to start consuming messages
+- [ ] At least once, at most once, and exactly once delivery semantics, allow producer to specify.
+- [ ] Save data across multiple brokers
 - [ ] Add support for real-time updates using WebSockets or Server-Sent Events
-  - [ ] Allow consumers to connect through SSE in real-time
+- [x] Allow consumers to connect to Kafka through Long Polling
 - [ ] Implement a system for monitoring and logging activity
 - [ ] Add testing. 
 - [ ] Implement authentication and authorization for API access
@@ -157,11 +174,6 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 See the [open issues](https://github.com/bobrandy13/webka/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-See the [open issues](https://github.com/bobrandy13/webka/issues) for a full list of proposed features (and known
-issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- CONTRIBUTING -->
@@ -181,7 +193,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

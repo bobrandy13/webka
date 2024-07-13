@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240702020758_Updates")]
+    partial class Updates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,10 +106,10 @@ namespace Kafka_for_web.Migrations
                     b.Property<long?>("Key")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProducerId")
+                    b.Property<long>("PartitionId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TopicId")
+                    b.Property<long>("ProducerId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Value")
@@ -116,9 +119,9 @@ namespace Kafka_for_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProducerId");
+                    b.HasIndex("PartitionId");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("ProducerId");
 
                     b.ToTable("message", (string)null);
                 });
@@ -235,21 +238,21 @@ namespace Kafka_for_web.Migrations
 
             modelBuilder.Entity("Kafka_for_web.Models.Message", b =>
                 {
+                    b.HasOne("Kafka_for_web.Models.Partition", "Partition")
+                        .WithMany("Messages")
+                        .HasForeignKey("PartitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Kafka_for_web.Models.Producer", "Producer")
                         .WithMany("Messages")
                         .HasForeignKey("ProducerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Kafka_for_web.Models.Partition", "Topic")
-                        .WithMany("Messages")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Partition");
 
                     b.Navigation("Producer");
-
-                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Partition", b =>
