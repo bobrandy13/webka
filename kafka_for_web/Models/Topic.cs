@@ -17,9 +17,11 @@ public class Topic
    public long ReplicationFactor { get; set; }
 
    public long ClusterId { get; set; }
-
    [JsonIgnore]
    public Cluster? Cluster { get; set; } = null!;
+   
+   [JsonIgnore]
+   public ICollection<ConsumerOffsets>? ConsumerOffsets { get; set; } = null!;
 
    [JsonIgnore]
    public ICollection<Partition>? Partitions { get; set; } = null!;

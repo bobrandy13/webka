@@ -55,7 +55,7 @@ namespace Kafka_for_web.Controllers
         }
 
         // * Post a new message
-        [HttpPost("/message")]
+        [HttpPost("message")]
         // Takes parameter producerID. 
         public async Task<IActionResult> PostMessage(Message message)
         {
@@ -67,16 +67,18 @@ namespace Kafka_for_web.Controllers
             }
 
             // TODO: should decide which partition to save under 
-            var partition = HashFunction.Hash(message);
-
-            // FIX: Still requires 2 database calls. Is quite slow.
+            
             var topic = await _context.Topics.FindAsync(message.TopicId);
             if (topic == null) return BadRequest("Topic not found");
             
             var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
             if (cluster == null) return BadRequest("Cluster not found");
+            
+            var partition = HashFunction.Hash(message, topic.NumPartitions);
 
             var logPath = $"logs/{cluster.Name}/{topic.Name}/partition{partition}/log.txt";
+            
+            Console.WriteLine(logPath, partition);
 
             Logger.Write(logPath, message);
 

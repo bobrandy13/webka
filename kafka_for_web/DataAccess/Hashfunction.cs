@@ -15,33 +15,26 @@ public static class HashFunction
     /// Hash function that takes a message and a number of servers and returns the partition number.
     /// </summary>
     /// <param name="message"></param>
-    /// <param name="NumServers"></param>
-    /// <returns>An integer that represents the partition to send to, </returns>
-    public static int Hash(Message message, int NumServers = 1)
+    /// <param name="numServers"></param>
+    /// <returns>An integer that represents the partition to send to </returns>
+    public static long Hash(Message message, long numServers = 1)
     {
-        // ROUND ROBIN PARTITIONING
+        // ! ROUND ROBIN PARTITIONING
         if (message.Key == null)
         {
             _lastPartition++;
 
-            if (_lastPartition >= NumServers)
+            if (_lastPartition > numServers)
             {
                 _lastPartition = 0;
             }
 
             return _lastPartition;
         }
-        else
-        {
-            var data = Sha.ComputeHash(
-                System.Text.Encoding.UTF8.GetBytes(message.Key.ToString() ?? throw new InvalidOperationException()));
-            
-            return BitConverter.ToInt32(data) % NumServers;
-        }
-    }
 
-    public static int ConsistentHashing<T>(int hashSpace, T key)
-    {
-        return -1;
+        var data = Sha.ComputeHash(
+            System.Text.Encoding.UTF8.GetBytes(message.Key.ToString() ?? throw new InvalidOperationException()));
+
+        return BitConverter.ToInt64(data) % numServers;
     }
 }

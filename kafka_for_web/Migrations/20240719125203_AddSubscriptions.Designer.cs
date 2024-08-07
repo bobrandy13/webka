@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240719125203_AddSubscriptions")]
+    partial class AddSubscriptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace Kafka_for_web.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("cluster", (string)null);
                 });
@@ -69,9 +69,6 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ConsumerGroupId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("consumer", (string)null);
                 });
 
@@ -95,36 +92,7 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ClusterId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("consumerGroup", (string)null);
-                });
-
-            modelBuilder.Entity("Kafka_for_web.Models.ConsumerOffsets", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ConsumerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Offset")
-                        .HasColumnType("integer");
-
-                    b.Property<long>("TopicId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConsumerId");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("offset", (string)null);
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Message", b =>
@@ -193,9 +161,6 @@ namespace Kafka_for_web.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("producer", (string)null);
                 });
 
@@ -253,9 +218,6 @@ namespace Kafka_for_web.Migrations
 
                     b.HasIndex("ClusterId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("topic", (string)null);
                 });
 
@@ -277,25 +239,6 @@ namespace Kafka_for_web.Migrations
                         .IsRequired();
 
                     b.Navigation("Cluster");
-                });
-
-            modelBuilder.Entity("Kafka_for_web.Models.ConsumerOffsets", b =>
-                {
-                    b.HasOne("Kafka_for_web.Models.Consumer", "consumer")
-                        .WithMany("ConsumerOffsets")
-                        .HasForeignKey("ConsumerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kafka_for_web.Models.Topic", "Topic")
-                        .WithMany("ConsumerOffsets")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-
-                    b.Navigation("consumer");
                 });
 
             modelBuilder.Entity("Kafka_for_web.Models.Message", b =>
@@ -373,8 +316,6 @@ namespace Kafka_for_web.Migrations
 
             modelBuilder.Entity("Kafka_for_web.Models.Consumer", b =>
                 {
-                    b.Navigation("ConsumerOffsets");
-
                     b.Navigation("Subscriptions");
                 });
 
@@ -397,8 +338,6 @@ namespace Kafka_for_web.Migrations
 
             modelBuilder.Entity("Kafka_for_web.Models.Topic", b =>
                 {
-                    b.Navigation("ConsumerOffsets");
-
                     b.Navigation("Partitions");
                 });
 #pragma warning restore 612, 618

@@ -29,6 +29,9 @@ public class Consumer
     // public long offset;
     [JsonIgnore]
     public ICollection<Subscription>? Subscriptions { get; set; } = [];
+    
+    [JsonIgnore]
+    public ICollection<ConsumerOffsets>? ConsumerOffsets { get; set; } = null!;
 
     public long ConsumerGroupId { get; set; }
 
@@ -41,13 +44,19 @@ public class Subscription
 {
     [Key]
     public long Id { get; set; }
-    public long ConsumerId { get; set; }
 
+    public long ConsumerId { get; set; }
+    [ForeignKey("ConsumerId")]
     [JsonIgnore]
     public Consumer Consumer { get; set; } = null!;
 
-    public long TopicId { get; set; }
+    public long ConsumerGroupId { get; set; }
+    [ForeignKey("ConsumerGroupId")]
+    [JsonIgnore]
+    public ConsumerGroup ConsumerGroup { get; set; } = null!;
 
+    public long TopicId { get; set; }
+    [ForeignKey("TopicId")]
     [JsonIgnore]
     public Topic Topic { get; set; } = null!;
 }
@@ -68,13 +77,20 @@ public class ConsumerOptionalParams
 
 public class ConsumerOffsets
 {
+    public long Id { get; set; } 
+    
+    public int Offset { get; set; }
+    
     public long ConsumerId;
 
     [ForeignKey("ConsumerId")]
     [JsonIgnore]
-    public Consumer consumer { get; set; } = null!;
+    public Consumer Consumer { get; set; } = null!;
 
 
-    public long offset;
+    public long TopicId;
+    [JsonIgnore]
+    [ForeignKey("TopicId")]
+    public Topic Topic { get; set; } = null!;
 
 }

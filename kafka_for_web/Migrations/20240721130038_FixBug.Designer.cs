@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240721130038_FixBug")]
+    partial class FixBug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,9 +114,6 @@ namespace Kafka_for_web.Migrations
 
                     b.Property<long>("ConsumerId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("Offset")
-                        .HasColumnType("integer");
 
                     b.Property<long>("TopicId")
                         .HasColumnType("bigint");
