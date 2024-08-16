@@ -47,7 +47,7 @@ public class KafkaContext : DbContext
 
         modelBuilder.Entity<Subscription>().ToTable("subscription");
 
-        modelBuilder.Entity<ConsumerOffsets>().ToTable("offset");
+        modelBuilder.Entity<ConsumerOffsets>().ToTable("offset").HasIndex(offset => offset.ConsumerId);
     }
 
 }

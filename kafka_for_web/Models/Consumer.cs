@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
@@ -29,7 +30,7 @@ public class Consumer
     // public long offset;
     [JsonIgnore]
     public ICollection<Subscription>? Subscriptions { get; set; } = [];
-    
+
     [JsonIgnore]
     public ICollection<ConsumerOffsets>? ConsumerOffsets { get; set; } = null!;
 
@@ -50,10 +51,10 @@ public class Subscription
     [JsonIgnore]
     public Consumer Consumer { get; set; } = null!;
 
-    public long ConsumerGroupId { get; set; }
+    public long? ConsumerGroupId { get; set; }
     [ForeignKey("ConsumerGroupId")]
     [JsonIgnore]
-    public ConsumerGroup ConsumerGroup { get; set; } = null!;
+    public ConsumerGroup? ConsumerGroup { get; set; } = null!;
 
     public long TopicId { get; set; }
     [ForeignKey("TopicId")]
@@ -75,12 +76,13 @@ public class ConsumerOptionalParams
     // public bool? __partition;
 }
 
+
 public class ConsumerOffsets
 {
-    public long Id { get; set; } 
-    
+    public long Id { get; set; }
+
     public int Offset { get; set; }
-    
+
     public long ConsumerId;
 
     [ForeignKey("ConsumerId")]

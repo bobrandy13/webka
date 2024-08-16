@@ -36,7 +36,7 @@ namespace Kafka_for_web.Controllers
 
             if (consumerGroup == null)
             {
-                return NotFound();
+                return NotFound("Error 404. Consumer group not found. ");
             }
 
             return consumerGroup;

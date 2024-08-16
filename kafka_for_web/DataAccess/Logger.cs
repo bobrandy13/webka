@@ -1,6 +1,4 @@
 using Kafka_for_web.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
 
 namespace Kafka_for_web.DataAccess;
 
@@ -54,5 +52,39 @@ public static class Logger
             Console.WriteLine(e.Message);
             return "Not Found. Thing was not found.";
         }
+    }
+
+
+    /// <summary>
+    /// This method returns the length of the specified log file 
+    /// <example>
+    /// For example:
+    /// <code>
+    /// long length = Logger.GetSize("/Eccormce/Buyers");
+    /// </code>
+    /// results in <c>length</c>'s having the value of the number of events inside the log file.
+    /// </example>
+    /// </summary>
+    /// TODO: 
+    public static int GetSize(string LogPath)
+    {
+        return -1; 
+    }
+
+    /// <summary>
+    /// This method scans through the log file and then deletes any old logs. 
+    /// <example>
+    /// For example:
+    /// <code>
+    /// Point p = new Point(3,5);
+    /// p.Translate(-1,3);
+    /// </code>
+    /// results in <c>p</c>'s having the value (2,8).
+    /// </example>
+    /// </summary>
+    // TODO: 
+    public static void Clean(string logPath)
+    {
+
     }
 }

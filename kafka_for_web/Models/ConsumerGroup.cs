@@ -11,6 +11,8 @@ public class ConsumerGroup
     public string Name { get; set; } = null!;
 
     public long ClusterId { get; set; }
+    
+    public long numMembers { get; set; }
 
     [ForeignKey("ClusterId")]
     public Cluster? Cluster { get; set; } = null!;

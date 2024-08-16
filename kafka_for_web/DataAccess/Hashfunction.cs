@@ -16,7 +16,7 @@ public static class HashFunction
     /// </summary>
     /// <param name="message"></param>
     /// <param name="numServers"></param>
-    /// <returns>An integer that represents the partition to send to </returns>
+    /// <returns>An integer that represents the partition to send to. </returns>
     public static long Hash(Message message, long numServers = 1)
     {
         // ! ROUND ROBIN PARTITIONING

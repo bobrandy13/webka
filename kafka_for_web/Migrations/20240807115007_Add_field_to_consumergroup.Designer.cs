@@ -3,6 +3,7 @@ using System;
 using Kafka_for_web.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Kafka_for_web.Migrations
 {
     [DbContext(typeof(KafkaContext))]
-    partial class KafkaContextModelSnapshot : ModelSnapshot
+    [Migration("20240807115007_Add_field_to_consumergroup")]
+    partial class Add_field_to_consumergroup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -210,7 +213,7 @@ namespace Kafka_for_web.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("ConsumerGroupId")
+                    b.Property<long>("ConsumerGroupId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ConsumerId")
@@ -335,7 +338,9 @@ namespace Kafka_for_web.Migrations
                 {
                     b.HasOne("Kafka_for_web.Models.ConsumerGroup", "ConsumerGroup")
                         .WithMany("Subscriptions")
-                        .HasForeignKey("ConsumerGroupId");
+                        .HasForeignKey("ConsumerGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Kafka_for_web.Models.Consumer", "Consumer")
                         .WithMany("Subscriptions")

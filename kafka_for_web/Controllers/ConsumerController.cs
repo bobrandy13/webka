@@ -10,6 +10,7 @@ using Kafka_for_web.Models;
 using System.Collections;
 using System.Net;
 using kafka_for_web.DataAccess;
+using Azure.Core;
 
 namespace Kafka_for_web.Controllers
 {
@@ -106,59 +107,77 @@ namespace Kafka_for_web.Controllers
             return NoContent();
         }
 
-        // Consider: How would concurrent requests be handled?
+        // Need to make a design decision here. Note to future self. How do we want to implement consumer groups
         [HttpPost("subscribe")]
-        public async Task<IActionResult> SubscribeToTopic(string consumerName, string topicName, ConsumerOptionalParams optionalParams, CancellationToken cancellationToken)
+        public async Task<IActionResult> SubscribeToTopic(string consumerName, string topicName,
+            ConsumerOptionalParams optionalParams, CancellationToken cancellationToken)
         {
             var consumer = _context.Consumers.FirstOrDefault(consumer => consumer.Name == consumerName);
-            if (consumer == null) return NotFound("The provided consumer did not exist."); 
-            
+            if (consumer == null) return NotFound("The provided consumer did not exist.");
+
             var topic = _context.Topics.FirstOrDefault(topic => topic.Name == topicName);
             if (topic == null) return NotFound("The provided topic did not exist.");
-            
+
             var cluster = _context.Clusters.FirstOrDefault(cluster => cluster.Id == topic.ClusterId);
             if (cluster == null) return NotFound("The provided cluster did not exist.");
+
+            var consumerOffset = await _context.Offsets.Where(offset => offset.ConsumerId == consumer.Id)
+                .FirstOrDefaultAsync();
+
+            if (consumerOffset == null)
+            {
+                // TODO: Create one
+
+                consumerOffset = new ConsumerOffsets
+                {
+                    ConsumerId = consumer.Id,
+                    Consumer = consumer,
+                    TopicId = topic.Id,
+                    Topic = topic,
+                    Offset = 0
+                };
+
+                _context.Offsets.Add(consumerOffset);
+            }
+
+            const int MAX_TIMEOUT = 5;
+
+            for (var i = 0; i < MAX_TIMEOUT; ++i)
+            {
+                Console.WriteLine("Waiting for messages");
+
+                if (NewMessage())
+                {
+                    var message = _context.Messages.FirstOrDefault(message => message.TopicId == topic.Id);
+
+                    // Increment the offset
+                    consumerOffset.Offset++;
+
+                    // Save the offset
+                    _context.Offsets.Update(consumerOffset);
+
+                    // Return the message
+                    return Ok(message);
+                }
+
+                await Task.Delay(1000, cancellationToken);
+            }
             
-            // TODO: Fix this.
-            var offset = _context.Offsets.FirstOrDefault(offset => offset.ConsumerId == consumer.Id);
-
-            if (offset == null)
-            {
-                _context.Offsets.Add(new ConsumerOffsets() { Consumer = consumer, ConsumerId = consumer.Id, Offset = 1, TopicId = topic.Id});
-            }
-            else
-            {
-                offset.Offset++; 
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            var timeout = TimeSpan.FromSeconds(10);
-            var deadline = DateTime.UtcNow.Add(timeout);
-
-            while (DateTime.UtcNow < deadline)
-            {
-                // TODO: Perform operations to check if there are new logs every second. 
-                
-                if (NewMessage()) 
-                    return Ok(new {Message = "There is a new message. "});
-                await Task.Delay(1000, cancellationToken); 
-
-            }
-
-            return new ObjectResult(new { Message = "Message has been successfully read." ?? "Long polling timeout...", status = "New message received!" });
+            return StatusCode(StatusCodes.Status204NoContent);
         }
 
+        // TODO: Implement this method.
         private static bool NewMessage()
         {
-            return false; 
+            return false;
         }
 
         // This does the job of a leader node. 
         private void RebalanceWorkload(long consumerGroupName, string topicName)
         {
             // Find out how many consumers are joined to this topic;
-            var consumerCount = _context.Subscriptions.Count(subscriptions => subscriptions.ConsumerGroupId == consumerGroupName);
+            var consumerCount =
+                _context.Subscriptions.Count(subscriptions => subscriptions.ConsumerGroupId == consumerGroupName);
 
             var topic = _context.Topics.Where(topic => topic.Name == topicName);
             // find out how many partitions are being read from. 
