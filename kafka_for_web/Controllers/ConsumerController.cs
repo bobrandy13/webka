@@ -74,6 +74,7 @@ namespace Kafka_for_web.Controllers
             }
 
             return NoContent();
+
         }
 
         /// <summary>
@@ -120,9 +121,11 @@ namespace Kafka_for_web.Controllers
 
             var cluster = _context.Clusters.FirstOrDefault(cluster => cluster.Id == topic.ClusterId);
             if (cluster == null) return NotFound("The provided cluster did not exist.");
-
+            
             var consumerOffset = await _context.Offsets.Where(offset => offset.ConsumerId == consumer.Id)
                 .FirstOrDefaultAsync();
+            
+            // consumer optionalParams.NumMessages 
 
             if (consumerOffset == null)
             {
@@ -140,36 +143,34 @@ namespace Kafka_for_web.Controllers
                 _context.Offsets.Add(consumerOffset);
             }
 
-            const int MAX_TIMEOUT = 5;
+            // 5 milliseconds.
+            const int maxTimeout = 5000;
 
-            for (var i = 0; i < MAX_TIMEOUT; ++i)
+            for (var i = 0; i < maxTimeout; i += 1000)
             {
-                Console.WriteLine("Waiting for messages");
+                // NOTE: If offset is already max, then it won't increment and no new message will be returned. 
+                var message = CheckForNewMessage(topic.Name, cluster.Name, consumerOffset.Offset, optionalParams.NumMessages ?? 1);
 
-                if (NewMessage())
+                if (message != null)
                 {
-                    var message = _context.Messages.FirstOrDefault(message => message.TopicId == topic.Id);
-
-                    // Increment the offset
                     consumerOffset.Offset++;
-
-                    // Save the offset
-                    _context.Offsets.Update(consumerOffset);
-
-                    // Return the message
+                    await _context.SaveChangesAsync(cancellationToken);
                     return Ok(message);
                 }
 
                 await Task.Delay(1000, cancellationToken);
             }
             
+            // return long polling timeout
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
         // TODO: Implement this method.
-        private static bool NewMessage()
+        private static string? CheckForNewMessage(string topicName, string clusterName, int offset, int numMessages)
         {
-            return false;
+            // if there is only 1, then it should be consuming all the messages 
+            var message = Logger.Read(topicName, clusterName, offset);
+            return message;
         }
 
         // This does the job of a leader node. 
@@ -178,8 +179,9 @@ namespace Kafka_for_web.Controllers
             // Find out how many consumers are joined to this topic;
             var consumerCount =
                 _context.Subscriptions.Count(subscriptions => subscriptions.ConsumerGroupId == consumerGroupName);
-
+            
             var topic = _context.Topics.Where(topic => topic.Name == topicName);
+
             // find out how many partitions are being read from. 
 
             return;

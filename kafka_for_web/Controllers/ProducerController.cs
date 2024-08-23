@@ -73,9 +73,10 @@ namespace Kafka_for_web.Controllers
             var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
             if (cluster == null) return BadRequest("Cluster not found");
 
-            var partition = HashFunction.Hash(message, topic.NumPartitions);
+            // var partition = HashFunction.Hash(message, topic.NumPartitions);
 
-            var logPath = $"logs/{cluster.Name}/{topic.Name}/partition{partition}/log.txt";
+            // URGENT TODO: Replace this with a function call to a context. 
+            var logPath = $"logs/{cluster.Name}/{topic.Name}/log.txt";
 
             Logger.Clean(logPath);
 

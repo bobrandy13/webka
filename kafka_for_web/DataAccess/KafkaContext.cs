@@ -49,5 +49,4 @@ public class KafkaContext : DbContext
 
         modelBuilder.Entity<ConsumerOffsets>().ToTable("offset").HasIndex(offset => offset.ConsumerId);
     }
-
 }

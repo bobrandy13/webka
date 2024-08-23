@@ -10,7 +10,6 @@ public static class Logger
         {
             var baseDirectory = AppContext.BaseDirectory;
 
-            // FIXME: bruh what is this
             var projectDirectory = Directory.GetParent(baseDirectory)?.Parent?.Parent?.Parent?.Parent?.FullName;
             if (projectDirectory == null) return false;
             var logDirectory = Path.Combine(projectDirectory, "kafka_for_web", logPath);
@@ -32,26 +31,41 @@ public static class Logger
         }
     }
 
-    public static string Read(string logPath, int offset)
+    // This function is only reading from the first partition (partition 0)
+    public static string? Read(string topicName, string clusterName, int offset)
     {
         try
         {
+            // if the offset is something out of bounds, return null;
+            if (offset == -1) return null;
+
+            var logPath = $"logs/{clusterName}/{topicName}/partition0/log.txt";
             var baseDirectory = AppContext.BaseDirectory;
 
             // ykw, if it works it works.
+            // NOTE: may break in production
             var projectDirectory = Directory.GetParent(baseDirectory)?.Parent?.Parent?.Parent?.Parent?.FullName;
             if (projectDirectory == null) return "Directory was not found. I am not in the correct location";
 
             var logDirectory = Path.Combine(projectDirectory, "Kafka_for_web", logPath);
-            var line = File.ReadLines(logDirectory).Skip(offset).Take(1).First();
+            var line = File.ReadLines(logDirectory);
 
-            return line;
+            var enumerable = line as string[] ?? line.ToArray();
+            return offset >= enumerable.Length ? null : enumerable.Skip(offset).Take(1).First();
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
             return "Not Found. Thing was not found.";
         }
+    }
+
+    /// <summary>
+    /// Since topicID is unique, we can find the cluster name based on the topic id
+    /// </summary>
+    public static string GetLogPath(long topicId)
+    {
+        return "";
     }
 
 
@@ -68,7 +82,7 @@ public static class Logger
     /// TODO: 
     public static int GetSize(string LogPath)
     {
-        return -1; 
+        return -1;
     }
 
     /// <summary>
@@ -85,6 +99,5 @@ public static class Logger
     // TODO: 
     public static void Clean(string logPath)
     {
-
     }
 }

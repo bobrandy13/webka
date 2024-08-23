@@ -24,7 +24,7 @@ public static class HashFunction
         {
             _lastPartition++;
 
-            if (_lastPartition > numServers)
+            if (_lastPartition >= numServers)
             {
                 _lastPartition = 0;
             }

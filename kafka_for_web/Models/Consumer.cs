@@ -64,7 +64,9 @@ public class Subscription
 
 public class ConsumerOptionalParams
 {
-    public bool? __from_beginning { get; set; }
+    public bool? FromBeginning { get; set; }
+    
+    public int? NumMessages { get; set; }
     // public bool? __formatter { get; set; }
 
     // public string? __consumer_property { get; set; } = null!;
