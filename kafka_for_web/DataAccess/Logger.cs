@@ -39,7 +39,7 @@ public static class Logger
             // if the offset is something out of bounds, return null;
             if (offset == -1) return null;
 
-            var logPath = $"logs/{clusterName}/{topicName}/partition0/log.txt";
+            var logPath = $"logs/{clusterName}/{topicName}/log.txt";
             var baseDirectory = AppContext.BaseDirectory;
 
             // ykw, if it works it works.
@@ -65,12 +65,12 @@ public static class Logger
     /// </summary>
     public static string GetLogPath(long topicId)
     {
-        return "";
+        return ""; 
     }
 
 
     /// <summary>
-    /// This method returns the length of the specified log file 
+    /// This method returns the number of lines of the specified log file 
     /// <example>
     /// For example:
     /// <code>
@@ -80,9 +80,10 @@ public static class Logger
     /// </example>
     /// </summary>
     /// TODO: 
-    public static int GetSize(string LogPath)
+    public static long GetSize(string logPath)
     {
-        return -1;
+        var length = File.ReadLines(logPath).Count(); 
+        return length;
     }
 
     /// <summary>
@@ -90,7 +91,7 @@ public static class Logger
     /// <example>
     /// For example:
     /// <code>
-    /// Point p = new Point(3,5);
+    /// clean(logPath)
     /// p.Translate(-1,3);
     /// </code>
     /// results in <c>p</c>'s having the value (2,8).
@@ -99,5 +100,6 @@ public static class Logger
     // TODO: 
     public static void Clean(string logPath)
     {
+        return; 
     }
 }

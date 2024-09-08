@@ -42,8 +42,6 @@
   </p>
 </div>
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -80,6 +78,10 @@
 This project is a custom implementation of a Kafka-like messaging system using HTTP, ASP.NET, C#, and Microsoft SQL
 Server. The goal is to replicate the core functionalities of Apache Kafka, providing a reliable and scalable platform
 for building real-time data pipelines and streaming applications.
+
+## Why Webka? 
+Webka is run on a single instance node with replication, without the hassle of Kafka setup. Starting configuring the settings from within the api call and change them on demand. 
+
 Features
 
 - **Cluster**: Manage multiple clusters for organizational and scalability purposes.
@@ -93,7 +95,6 @@ Features
 - **HTTP Interface**: Interact with the system using a RESTful API built with ASP.NET
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- GETTING STARTED -->
@@ -139,7 +140,6 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 <!-- ROADMAP -->
 
 ## Roadmap
@@ -155,33 +155,35 @@ For more examples, please refer to the swagger documentation. Linked here [here]
 - [x] Implement Consumer Groups 
 - [x] Implement Subscriptions
 - [x] Implement Messages
-- [x] Save data to MS SQL Server
+- [x] Save metadata to RDBMS
 - [x] Allow producers to produce messages
 - [x] Producer must specify a topic, and specify partition
 - [x] Allow all types of messages to be produced, Objects, json, strings, int, etc
-- [ ] Partition producer's data into partitions using a partition key and hashing algorithms
-- [ ] Have a replication factor to ensure reliability.
+- [x] Partition producer's data into partitions using a partition key and hashing algorithms (REMOVED)
+- [ ] Implement replication factor to ensure reliability.
+- [-] Implement consumer groups to ensure that messages are not processed twice by two consumers in the same group. 
 - [x] Allow consumers to consume messages
 - [x] Allow consumers to specify the offset to start consuming messages
 - [ ] At least once, at most once, and exactly once delivery semantics, allow producer to specify.
-- [ ] Save data across multiple brokers
-- [ ] Add support for real-time updates using WebSockets or Server-Sent Events
+- [ ] Send and read messages in batch
+- [-] Save data across multiple brokers
+- [-] Add support for real-time updates using WebSockets or Server-Sent Events
 - [x] Allow consumers to connect to Kafka through Long Polling
-- [ ] Implement a system for monitoring and logging activity
-- [ ] Add testing. 
-- [ ] Implement authentication and authorization for API access
+- [=] Implement a system for monitoring and logging activity
+- [ ] Add testing. (IN PROGRESS)
+  - [ ] Volume test.
+- [ ] Implement authentication and authorization for API access (JWT)
 
 See the [open issues](https://github.com/bobrandy13/webka/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- CONTRIBUTING -->
 
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any
-contributions you make are **greatly appreciated**.
+contributions you make are very **greatly appreciated**.
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also
 simply open an issue with the tag "enhancement".

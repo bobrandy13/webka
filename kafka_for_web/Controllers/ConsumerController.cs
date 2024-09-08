@@ -11,6 +11,7 @@ using System.Collections;
 using System.Net;
 using kafka_for_web.DataAccess;
 using Azure.Core;
+using NuGet.Common;
 
 namespace Kafka_for_web.Controllers
 {
@@ -113,24 +114,19 @@ namespace Kafka_for_web.Controllers
         public async Task<IActionResult> SubscribeToTopic(string consumerName, string topicName,
             ConsumerOptionalParams optionalParams, CancellationToken cancellationToken)
         {
-            var consumer = _context.Consumers.FirstOrDefault(consumer => consumer.Name == consumerName);
+            var consumer = await _context.Consumers.FirstOrDefaultAsync(consumer => consumer.Name == consumerName, cancellationToken);
             if (consumer == null) return NotFound("The provided consumer did not exist.");
 
-            var topic = _context.Topics.FirstOrDefault(topic => topic.Name == topicName);
+            var topic = await _context.Topics.FirstOrDefaultAsync(topic => topic.Name == topicName, cancellationToken);
             if (topic == null) return NotFound("The provided topic did not exist.");
 
-            var cluster = _context.Clusters.FirstOrDefault(cluster => cluster.Id == topic.ClusterId);
+            var cluster = await _context.Clusters.FirstOrDefaultAsync(cluster => cluster.Id == topic.ClusterId, cancellationToken);
             if (cluster == null) return NotFound("The provided cluster did not exist.");
-            
-            var consumerOffset = await _context.Offsets.Where(offset => offset.ConsumerId == consumer.Id)
-                .FirstOrDefaultAsync();
-            
-            // consumer optionalParams.NumMessages 
+
+            var consumerOffset = await _context.Offsets.FirstOrDefaultAsync(offset => offset.ConsumerId == consumer.Id, cancellationToken);
 
             if (consumerOffset == null)
             {
-                // TODO: Create one
-
                 consumerOffset = new ConsumerOffsets
                 {
                     ConsumerId = consumer.Id,
@@ -148,7 +144,6 @@ namespace Kafka_for_web.Controllers
 
             for (var i = 0; i < maxTimeout; i += 1000)
             {
-                // NOTE: If offset is already max, then it won't increment and no new message will be returned. 
                 var message = CheckForNewMessage(topic.Name, cluster.Name, consumerOffset.Offset, optionalParams.NumMessages ?? 1);
 
                 if (message != null)
@@ -158,9 +153,12 @@ namespace Kafka_for_web.Controllers
                     return Ok(message);
                 }
 
-                await Task.Delay(1000, cancellationToken);
+                // Check if cancellation is requested 
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await Task.Delay(millisecondsDelay: 1000, cancellationToken: cancellationToken);
             }
-            
+
             // return long polling timeout
             return StatusCode(StatusCodes.Status204NoContent);
         }
@@ -168,7 +166,6 @@ namespace Kafka_for_web.Controllers
         // TODO: Implement this method.
         private static string? CheckForNewMessage(string topicName, string clusterName, int offset, int numMessages)
         {
-            // if there is only 1, then it should be consuming all the messages 
             var message = Logger.Read(topicName, clusterName, offset);
             return message;
         }
@@ -179,7 +176,7 @@ namespace Kafka_for_web.Controllers
             // Find out how many consumers are joined to this topic;
             var consumerCount =
                 _context.Subscriptions.Count(subscriptions => subscriptions.ConsumerGroupId == consumerGroupName);
-            
+
             var topic = _context.Topics.Where(topic => topic.Name == topicName);
 
             // find out how many partitions are being read from. 

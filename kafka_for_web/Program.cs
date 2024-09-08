@@ -12,6 +12,9 @@ builder.Services.AddDbContext<KafkaContext>(options =>
     options.UseNpgsql("Host=localhost;Port=5432;Database=webka;"));
 
 
+var kafkaDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "Kafka_for_web");
+Directory.SetCurrentDirectory(kafkaDirectory);
+
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(opt =>
@@ -42,3 +45,4 @@ app.UseCors();
 app.MapControllers();
 
 app.Run();
+

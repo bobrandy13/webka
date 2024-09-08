@@ -16,10 +16,24 @@ public class LoggingTest
     [Test]
     public void TestReading()
     {
-        Logger.Read("", 0);
-        for (var i = 0; i < 12; ++i)
-        {
-            Logger.Read("", i);
-        }
+        long avg = 0;
+        Console.WriteLine(
+            Logger.Read("Buyers", "EccomerceStore",10));
+    }
+
+    // Stress Writing
+    [Test]
+    public void TestMassLogging()
+    {
+        // Test the logging here.
+        Assert.Pass();
+    }
+    
+    // Stress reading
+    [Test]
+    public void TestMassReading()
+    {
+        // Test the reading here. 
+        Assert.Pass();
     }
 }

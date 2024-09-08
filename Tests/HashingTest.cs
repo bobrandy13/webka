@@ -17,7 +17,7 @@ public class Tests
     private const double UpperBound = 1 + MarginOfError;
 
 
-    class Person(string name, int age)
+    private class Person(string name, int age)
     {
         private string Name { get; set; } = name;
         private int Age { get; set; } = age;
@@ -41,21 +41,33 @@ public class Tests
         var distribution = new int[NumServers];
         for (var i = 0; i < TotalData; ++i)
         {
-            var name = RandomString(20);
-            var age = Random.Next(1, 32);
+            var name = RandomString(100);
+            var age = Random.Next(1, 100);
             var person = new Person(name, age);
 
-            var hashIndex = HashFunction.Hash(new Message { Value = person.ToString() }, NumServers);
 
-            distribution[Math.Abs(hashIndex) % NumServers] += 1;
+            // Compute the hash index
+            var hashIndex = HashFunction.Hash(new Message { Value = person.ToString() }, NumServers);
+        
+            // Use a more uniform approach to distribute the hash across servers
+            var serverIndex = Math.Abs(hashIndex % NumServers);
+            distribution[serverIndex] += 1;
         }
 
+        foreach (var d in distribution) Console.WriteLine(d);
+
         // Ensure that all values are within +- 7%;
-        Assert.That(
-            distribution.Any(value =>
-                value > (double)TotalData / NumServers * LowerBound &&
-                value < (double)TotalData / NumServers * UpperBound), Is.True);
+        foreach (var value in distribution)
+        {
+            var lowerBound = (double)TotalData / NumServers * LowerBound;
+            var upperBound = (double)TotalData / NumServers * UpperBound;
+
+            Assert.That(value, Is.GreaterThanOrEqualTo(lowerBound)
+                    .And.LessThanOrEqualTo(upperBound),
+                $"Distribution out of expected range: {value}");
+        }
     }
+
 
     [Test]
     public void EnsureDistributionWithKey()
@@ -72,6 +84,7 @@ public class Tests
             distribution[Math.Abs(hashIndex) % NumServers] += 1;
         }
 
+        foreach (var d in distribution) Console.WriteLine(d);
         // Ensure that all values go to  the first server.
         Assert.That(distribution[0], Is.EqualTo(TotalData));
     }
@@ -87,11 +100,10 @@ public class Tests
             var name = RandomString(20);
             var age = Random.Next(1, 32);
             var person = new Person(name, age);
-            
-            
+
             var hashIndex = HashFunction.Hash(new Message
-                { Key = Random.Next(0, MaxValue), Value = person.ToString() }, NumServers);
-            
+            { Key = Random.Next(0, MaxValue), Value = person.ToString() }, NumServers);
+
             distribution[Math.Abs(hashIndex) % NumServers] += 1;
         }
 
@@ -102,11 +114,11 @@ public class Tests
             var person = new Person(name, age);
 
             var hashIndex = HashFunction.Hash(new Message
-                { Value = person.ToString() }, NumServers);
-            
+            { Value = person.ToString() }, NumServers);
+
             distribution[Math.Abs(hashIndex) % NumServers] += 1;
         }
-        
+
         foreach (var a in distribution) Console.WriteLine(a);
 
         Assert.That(

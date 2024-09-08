@@ -31,7 +31,7 @@ namespace Kafka_for_web.Controllers
         }
 
         // GET: api/Producer/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<Producer>> GetProducer(long id)
         {
             var producer = await _context.Producers.FindAsync(id);
@@ -73,9 +73,10 @@ namespace Kafka_for_web.Controllers
             var cluster = await _context.Clusters.FindAsync(topic.ClusterId);
             if (cluster == null) return BadRequest("Cluster not found");
 
+            // NOTE: Removed the idea of multiple partitions for simplicity. 
             // var partition = HashFunction.Hash(message, topic.NumPartitions);
 
-            // URGENT TODO: Replace this with a function call to a context. 
+            // REFACTOR TODO: Replace this with a function call to a context. 
             var logPath = $"logs/{cluster.Name}/{topic.Name}/log.txt";
 
             Logger.Clean(logPath);

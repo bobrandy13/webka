@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.DataAccess;
 using Kafka_for_web.Models;
 
+using System.IO;
+
 namespace Kafka_for_web.Controllers
 {
     [Route("api/[controller]")]
@@ -74,10 +76,24 @@ namespace Kafka_for_web.Controllers
         [HttpPost]
         public async Task<ActionResult<Cluster>> PostCluster(Cluster cluster)
         {
-            
-            _context.Clusters.Add(cluster);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
+            try
+            {
+                // !TODO: Refactor
+                var path = "/logs/" + cluster.Name;
+                var createClusterPath = Directory.CreateDirectory(Directory.GetCurrentDirectory() + path);
+                
+                var logPath = Directory.GetCurrentDirectory() + path + "/log.txt";
+                var createLogFile = System.IO.File.Create(logPath);
+
+                _context.Clusters.Add(cluster);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetCluster", new { id = cluster.Id }, cluster);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Cluster/5
