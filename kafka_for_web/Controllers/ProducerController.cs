@@ -8,6 +8,7 @@ using Kafka_for_web.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Kafka_for_web.Models;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Kafka_for_web.Controllers
@@ -66,6 +67,10 @@ namespace Kafka_for_web.Controllers
             {
                 return NotFound("Producer not found");
             }
+            
+            // TODO: Can this nature be fixed through the n + 1 problem? 
+            // The n + 1 problem is when you have to make n + 1 queries to the database to get the data you need.
+            // You can use a join isntead. 
 
             var topic = await _context.Topics.FindAsync(message.TopicId);
             if (topic == null) return BadRequest("Topic not found");

@@ -65,7 +65,7 @@ public static class Logger
     /// </summary>
     public static string GetLogPath(long topicId)
     {
-        return ""; 
+        return "";
     }
 
 
@@ -82,7 +82,7 @@ public static class Logger
     /// TODO: 
     public static long GetSize(string logPath)
     {
-        var length = File.ReadLines(logPath).Count(); 
+        var length = File.ReadLines(logPath).Count();
         return length;
     }
 
@@ -97,9 +97,12 @@ public static class Logger
     /// results in <c>p</c>'s having the value (2,8).
     /// </example>
     /// </summary>
-    // TODO: 
+    // TODO: This function should get rid of any logs that are out of date. IE go through every single log and clear from the end. 
+    // If the log is out of date, then delete the log. 
     public static void Clean(string logPath)
     {
-        return; 
+
+
+        return;
     }
 }

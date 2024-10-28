@@ -29,7 +29,9 @@ public static class HashFunction
                 _lastPartition = 0;
             }
 
-            return _lastPartition;
+            // we can just apply a modulo operation to get the partition number incase it goes outside of the required bounds 0 <= partiton < numServers 
+
+            return _lastPartition % numServers;
         }
 
         var data = Sha.ComputeHash(
